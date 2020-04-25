@@ -51,14 +51,15 @@ function main {
 }
 
 function usage {
-echo -n "
+    available_styles=($(ls $DIR/images/))
+    echo -n "
 Dynamic Wallpaper V1.0
 Developed By - Aditya Shakya (@adi1090x)
 
+Themes folder: $DIR/images/
 Available options:
--bitday		-firewatch
-
 "
+printf -- '-%s\n' "${available_styles[@]}"
 }
 
 function init {
@@ -68,7 +69,7 @@ function init {
 }
 
 function is_valid_style {
-    available_styles=(-bitday -firewatch)
+    available_styles=($(ls $DIR/images))
     for i in "${available_styles[@]}"
     do
         if [ "$i" == "$1" ] ; then
