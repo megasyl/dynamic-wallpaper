@@ -40,26 +40,32 @@ esac
 ##
 ## bitday, firewatch
 STYLE=
+NUMBER=24
 
 function set_wallpaper {
     $SETTER $DIR/images/$STYLE/$1.png
 }
 
 function main {
-    num=$(($TIME/1))
+    num=$(echo "scale=1; $TIME/24*$NUMBER" | bc | awk '{print int($1+0.5)}')
     set_wallpaper $num; sleep 10
 }
 
 function usage {
-    available_styles=($(ls $DIR/images/))
+    available_styles=($(ls -d $DIR/images/*))
     echo -n "
 Dynamic Wallpaper V1.0
 Developed By - Aditya Shakya (@adi1090x)
+-s, --style	=	style name
+-n, --number	=	number of images in theme
+-h, --help	=	show usage
 
-Themes folder: $DIR/images/
-Available options:
+Example: dwall -s=firewatch -n=24
+Styles folder: $DIR/images/
+Available styles:
 "
-printf -- '-%s\n' "${available_styles[@]}"
+for i in ${available_styles[@]}; do echo "$i" | rev | cut -d/ -f1 | rev | echo - "$(cat -)"; done
+exit 1
 }
 
 function init {
@@ -68,19 +74,26 @@ function init {
     done
 }
 
-function is_valid_style {
-    available_styles=($(ls $DIR/images))
-    for i in "${available_styles[@]}"
-    do
-        if [ "$i" == "$1" ] ; then
-            STYLE=$(echo $1 | cut -d- -f 2-)
-        fi
-    done
-}
+for i in "$@"
+do
+case $i in
+    -s=*|--style=*)
+    STYLE="${i#*=}"
+    ;;
+    -n=*|--number=*)
+    NUMBER="${i#*=}"
+    ;;
+    -h|--help)
+    usage
+    ;;
+    *)
+    echo -n "Unknown option: $i"
+    usage
+    ;;
+esac
+done
 
-is_valid_style $1
-
-if [[ $STYLE ]]; then
+if [[ ! -z "$STYLE" ]]; then
     init
 else
     usage
