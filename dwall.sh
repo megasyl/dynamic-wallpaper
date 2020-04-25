@@ -70,7 +70,7 @@ exit 1
 
 function init {
     while true; do
-        main && exec $DIR/dwall.sh -$STYLE
+        main && exec $DIR/dwall.sh -s=$STYLE -n=$NUMBER
     done
 }
 
